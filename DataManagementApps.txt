@@ -1,0 +1,85 @@
+CREATE TABLE Coffee_Shop(
+  shop_id INTEGER,
+  shop_name VARCHAR(50),
+  city VARCHAR(50),
+  state CHAR(2),
+  PRIMARY KEY (shop_id)
+  );
+  
+CREATE TABLE Employee(
+  employee_id INTEGER,
+  first_name VARCHAR(30),
+  last_name VARCHAR(30),
+  hire_date DATE,
+  job_title VARCHAR(30),
+  shop_id INTEGER,
+  PRIMARY KEY (employee_id),
+  FOREIGN KEY (shop_id) REFERENCES Coffee_Shop(shop_id)
+  );
+  
+CREATE TABLE Supplier(
+  supplier_id INTEGER,
+  company_name VARCHAR(50),
+  country VARCHAR(30),
+  sales_contact_name VARCHAR(60),
+  email VARCHAR(50) NOT NULL,
+  PRIMARY KEY (supplier_id)
+  );
+  
+CREATE TABLE Coffee(
+  coffee_id INTEGER,
+  shop_id INTEGER,
+  supplier_id INTEGER,
+  coffee_name VARCHAR(30),
+  price_per_pound NUMERIC(5,2),
+  PRIMARY KEY (coffee_id),
+  FOREIGN KEY (shop_id) REFERENCES Coffee_Shop(shop_id),
+  FOREIGN KEY (supplier_id) REFERENCES Supplier(supplier_id)
+  );
+  
+INSERT INTO Coffee_Shop
+  VALUES (5063, 'Wake Up Call', 'Blackfoot', 'ID'),
+         (4530, 'Java Express', 'Pocatello', 'ID'),
+         (5934, 'Homestyle', 'Idaho Falls', 'ID');
+         
+INSERT INTO Supplier
+  VALUES (1257, 'Bean Distrobution', 'Argentina', 'Hector Alverez', 'HectorAlverez2@beandistro.com'),
+         (5423, 'Bean Express', 'USA', 'Sarah Goodwin', 'sargood@beanxprss.com'),
+         (7590, 'Almighty Beans', 'USA', 'Marshall Baldwin', 'MarshBaldwin@almighty.com');
+         
+INSERT INTO Coffee
+  VALUES (6578, 4530, 1257, 'Espresso', 6.50),
+         (3452, 4530, 5423, 'Black Coffee', 4.99),
+         (4032, 5934, 7590, 'Black Coffee', 4.00);
+         
+INSERT INTO Employee
+  VALUES (5462, 'Derek', 'Wilson', '2012-06-01', 'Manager', 4530),
+         (8986, 'Emilia', 'Lindell', '2014-01-26', 'Barista', 5934),
+         (7575, 'Peter', 'Piper', '2020-03-16', 'Manager', 5063);
+  
+CREATE VIEW EmployeeView AS
+  SELECT employee_id,
+         CONCAT(first_name, ' ', last_name) AS employee_full_name,
+         hire_date,
+         job_title,
+         shop_id
+  FROM Employee;
+  
+CREATE INDEX indx_coffee_name
+ON Coffee (coffee_name)
+-----------------------------------------------------------------------------
+
+SELECT shop_id, shop_name, state
+FROM Coffee_Shop
+WHERE city = 'Blackfoot';
+
+SELECT coffee_id, coffee_name, A.shop_id, shop_name, C.company_name AS 'Supplier', sales_contact_name, c.email
+FROM Coffee AS A
+
+INNER JOIN Supplier AS C
+ON A.supplier_id = C.supplier_id
+
+LEFT JOIN Coffee_Shop AS B
+ON A.shop_id = B.shop_id
+
+WHERE coffee_name = 'Black Coffee';
